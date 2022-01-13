@@ -91,6 +91,37 @@ FAILED tests/unit/test_diffusion2d_functions.py::test_initialize_physical_parame
 FAILED tests/unit/test_diffusion2d_functions.py::test_get_initial_condition
 ========================= 3 failed, 2 passed in 0.47s =========================
 ### unittest log
+======================================================================
+FAIL: test_get_initial_condition (tests.unit.test_diffusion2d_functions.TestOperations)
+Checks function SolveDiffusion2D.get_initial_function
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/strack/git_workspace/testing-python-exercise/tests/unit/test_diffusion2d_functions.py", line 78, in test_get_initial_condition
+    self.assertEqual(actual_u[i,j], expected_u[i,j])
+AssertionError: 700.0 != 300.0
+
+======================================================================
+FAIL: test_initialize_domain (tests.unit.test_diffusion2d_functions.TestOperations)
+Check function SolveDiffusion2D.initialize_domain
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/strack/git_workspace/testing-python-exercise/tests/unit/test_diffusion2d_functions.py", line 36, in test_initialize_domain
+    self.assertEqual(solver.nx, expected_nx)
+AssertionError: 50 != 30
+
+======================================================================
+FAIL: test_initialize_physical_parameters (tests.unit.test_diffusion2d_functions.TestOperations)
+Checks function SolveDiffusion2D.initialize_domain
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/strack/git_workspace/testing-python-exercise/tests/unit/test_diffusion2d_functions.py", line 52, in test_initialize_physical_parameters
+    self.assertAlmostEqual(solver.dt, expected_dt, 6)
+AssertionError: 0.020000000000000004 != 0.032 within 6 places (0.011999999999999997 difference)
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.005s
+
+FAILED (failures=3)
 
 ## Citing
 
