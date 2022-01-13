@@ -142,6 +142,58 @@ Ran 3 tests in 0.001s
 FAILED (failures=3)
 ```
 
+### Integration test log
+```
+========================================== test session starts ==========================================
+platform linux -- Python 3.8.10, pytest-4.6.9, py-1.8.1, pluggy-0.13.0
+rootdir: /home/geldnens/Documents/carp/bild/2022.1/SSE/repos/testing-python-exercise-fork
+collected 2 items                                                                                       
+
+tests/integration/test_diffusion2d.py FF                                                          [100%]
+
+=============================================== FAILURES ================================================
+__________________________________ test_initialize_physical_parameters __________________________________
+
+    def test_initialize_physical_parameters():
+        """
+        Checks function SolveDiffusion2D.initialize_domain
+        """
+        solver = init_solver()
+    
+        # standard test approach for float equality
+>       assert abs(solver.dt - .008647059) < 1e-9
+E       assert 0.06194117629411765 < 1e-09
+E        +  where 0.06194117629411765 = abs((0.07058823529411765 - 0.008647059))
+E        +    where 0.07058823529411765 = <diffusion2d.SolveDiffusion2D object at 0x7f8c46a73d60>.dt
+
+tests/integration/test_diffusion2d.py:42: AssertionError
+----------------------------------------- Captured stdout call ------------------------------------------
+dt = 0.07058823529411765
+______________________________________ test_set_initial_condition _______________________________________
+
+    def test_set_initial_condition():
+        """
+        Checks function SolveDiffusion2D.get_initial_function
+        """
+        test_u = testing_params['physical']['T_cold'] * ones(
+            (testing_params['domain']['nx'], testing_params['domain']['ny'])
+        )
+        # set quarter-circle to hot
+        test_u[15, 9:11] = testing_params['physical']['T_hot']
+        test_u[13:15, 10] = testing_params['physical']['T_hot']
+    
+        solver = init_solver()
+        u = solver.set_initial_condition()
+>       assert array_equal(u, test_u)
+E       assert False
+E        +  where False = array_equal(array([[ 500.,  500.,  500.,  500.,  500.,  500.,  500.,  500.,  500.,\n         500.,  500.,  500.,  500.],\n       [ 5...., 1600.],\n       [ 500.,  500.,  500.,  500.,  500.,  500.,  500., 1600., 1600.,\n        1600., 1600., 1600., 1600.]]), array([[250., 250., 250., 250., 250., 250., 250., 250., 250., 250., 250.],\n       [250., 250., 250., 250., 250., 250.,... 250., 250., 250., 250., 250., 250., 800.],\n       [250., 250., 250., 250., 250., 250., 250., 250., 250., 800., 800.]]))
+
+tests/integration/test_diffusion2d.py:58: AssertionError
+----------------------------------------- Captured stdout call ------------------------------------------
+dt = 0.07058823529411765
+======================================= 2 failed in 0.41 seconds ========================================
+```
+
 ## Citing
 
 The code used in this exercise is based on [Chapter 7 of the book "Learning Scientific Programming with Python"](https://scipython.com/book/chapter-7-matplotlib/examples/the-two-dimensional-diffusion-equation/).
