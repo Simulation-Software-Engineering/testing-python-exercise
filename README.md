@@ -5,6 +5,7 @@ Please follow the instructions in [python_testing_exercise.md](https://github.co
 ## Test logs (for submission)
 
 Functions were intentionally broken in the following manner each time:
+
  * initialize\_domain: Calculate ny by dividing by dx instead of dy
  * initialize\_physical\_parameters: Add an additional dy2 factor in the divisor of the dt calculation
  * set\_initial\_condition: Multiply T\_cold and T\_hot by 2 before assigning them, as well as the squared radius before using it.
@@ -98,6 +99,48 @@ dt = 0.07058823529411765
 ```
 
 ### unittest log
+
+Run using ```python3 -m unittest tests/unit/test_diffusion2d_functions.py```
+
+```
+Fdt = 0.07058823529411765
+FF
+======================================================================
+FAIL: test_initialize_domain (tests.unit.test_diffusion2d_functions.TestDiffusion2D)
+Checks function SolveDiffusion2D.initialize_domain
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/geldnens/Documents/carp/bild/2022.1/SSE/repos/testing-python-exercise-fork/tests/unit/test_diffusion2d_functions.py", line 64, in test_initialize_domain
+    self.check_solver_attrs('domain')
+  File "/home/geldnens/Documents/carp/bild/2022.1/SSE/repos/testing-python-exercise-fork/tests/unit/test_diffusion2d_functions.py", line 49, in check_solver_attrs
+    self.assertEqual(attr_should, attr_is)
+AssertionError: 11 != 13
+
+======================================================================
+FAIL: test_initialize_physical_parameters (tests.unit.test_diffusion2d_functions.TestDiffusion2D)
+Checks function SolveDiffusion2D.initialize_physical_parameters
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/geldnens/Documents/carp/bild/2022.1/SSE/repos/testing-python-exercise-fork/tests/unit/test_diffusion2d_functions.py", line 78, in test_initialize_physical_parameters
+    self.check_solver_attrs('physical')
+  File "/home/geldnens/Documents/carp/bild/2022.1/SSE/repos/testing-python-exercise-fork/tests/unit/test_diffusion2d_functions.py", line 47, in check_solver_attrs
+    self.assertAlmostEqual(attr_should, attr_is)
+AssertionError: 0.008647059 != 0.07058823529411765 within 7 places (0.06194117629411765 difference)
+
+======================================================================
+FAIL: test_set_initial_condition (tests.unit.test_diffusion2d_functions.TestDiffusion2D)
+Checks function SolveDiffusion2D.get_initial_function
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/geldnens/Documents/carp/bild/2022.1/SSE/repos/testing-python-exercise-fork/tests/unit/test_diffusion2d_functions.py", line 91, in test_set_initial_condition
+    assert u[15, 10] == T_hot
+AssertionError
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=3)
+```
 
 ## Citing
 
