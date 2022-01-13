@@ -1,95 +1,107 @@
 """
 Tests for functions in class SolveDiffusion2D
 """
-
+import unittest
 from diffusion2d import SolveDiffusion2D
 
-def fixed_domain_init(solver):
+class TestDiffusion2D(unittest.TestCase):
+
     """
-    Initialize solver domain with fixed values used for testing
+    Parameters to use/check for solver initialization (includes results for the use of further test ste)
     """
-    solver.w = 5.
-    solver.h = 4.
-    solver.dx = .3
-    solver.dy = .35
-    solver.nx = int(solver.w / solver.dx)
-    solver.ny = int(solver.h / solver.dx)
+    testing_params = {
+        'domain': {
+            # test as many variations as possible, also last two test rounding/truncation
+            'w': 5., 'h': 4., 'dx': .3, 'dy': .35, 'nx': 16, 'ny': 11
+        },
+        'physical': {
+            # assuming above values previously in use
+            'D': 3., 'T_cold': 250., 'T_hot': 800., 'dt': .008647059
+        }
+    }
+
+    def setUp(self):
+        self.solver = SolveDiffusion2D
 
 
-def fixed_phys_param_init(solver):
-    """
-    Initialize solver physical parameters and dt 
-    with fixed values used for testing
-    """
-    solver.D = 3.
-    solver.T_cold = 250.
-    solver.T_hot = 800.
-    solver.dt = .008647059
+    def init_solver_attrs(self, *categories):
+        """
+        Initialize solver attributes with fixed values
+        """
+        for category in categories:
+            for key in self.testing_params[category]:
+                setattr(self.solver, key, self.testing_params[category][key])
 
 
-def test_initialize_domain():
-    """
-    Checks function SolveDiffusion2D.initialize_domain
-    """
-    solver = SolveDiffusion2D()
-    # test as many variations as possible
-    solver.initialize_domain(5., 4., .3, .35)
+    def check_solver_attrs(self, *categories):
+        """
+        Check if solver attributes have expected types and values
+        """
+        for category in categories:
+            for key in self.testing_params[category]:
+                attr_should = self.testing_params[category][key]
+                attr_is = getattr(self.solver, key)
 
-    assert type(solver.w) == float
-    assert solver.w == 5.
-    assert type(solver.h) == float
-    assert solver.h == 4.
-    assert type(solver.dx) == float
-    assert solver.dx == .3
-    assert type(solver.dy) == float
-    assert solver.dy == .35
-    assert type(solver.nx) == int
-    assert solver.nx == 16 # int() truncates from 16 2/3 as usual
-    assert type(solver.ny) == int
-    assert solver.ny == 11 # this should also round down as usual
+                self.assertEqual(type(attr_should), type(attr_is))
+                if type(attr_should) == float:
+                    self.assertAlmostEqual(attr_should, attr_is)
+                else:
+                    self.assertEqual(attr_should, attr_is)
 
 
-def test_initialize_physical_parameters():
-    """
-    Checks function SolveDiffusion2D.initialize_physical_parameters
-    """
-    solver = SolveDiffusion2D()
-    fixed_domain_init(solver)
-    solver.initialize_physical_parameters(3., 250., 800.)
+    def test_initialize_domain(self):
+        """
+        Checks function SolveDiffusion2D.initialize_domain
+        """
+        # somehow need to manually pass the "self" context here?
+        self.solver.initialize_domain(
+            self.solver,
+            self.testing_params['domain']['w'],
+            self.testing_params['domain']['h'],
+            self.testing_params['domain']['dx'], 
+            self.testing_params['domain']['dy']
+        )
+        self.check_solver_attrs('domain')
 
-    assert type(solver.D) == float
-    assert solver.D == 3.
-    assert type(solver.T_cold) == float
-    assert solver.T_cold == 250.
-    assert type(solver.T_hot) == float
-    assert solver.T_hot == 800.
-    assert type(solver.dt) == float
-    # standard test approach for float equality
-    assert abs(solver.dt - .008647059) < 1e-9
 
-def test_set_initial_condition():
-    """
-    Checks function SolveDiffusion2D.get_initial_function
-    """
-    T_cold = 250.
-    T_hot = 800.
+    def test_initialize_physical_parameters(self):
+        """
+        Checks function SolveDiffusion2D.initialize_physical_parameters
+        """
+        self.init_solver_attrs('domain')
+        self.solver.initialize_physical_parameters(
+            self.solver,
+            self.testing_params['physical']['D'],
+            self.testing_params['physical']['T_cold'],
+            self.testing_params['physical']['T_hot'], 
+        )        
+        self.check_solver_attrs('physical')
 
-    solver = SolveDiffusion2D()
-    fixed_domain_init(solver)
-    fixed_phys_param_init(solver)
-    u = solver.set_initial_condition()
 
-    # Test center of (quarter-)circle for equality to T_hot
-    assert u[15, 10] == T_hot
+    def test_set_initial_condition(self):
+        """
+        Checks function SolveDiffusion2D.get_initial_function
+        """
+        self.init_solver_attrs('domain', 'physical')
+        u = self.solver.set_initial_condition(self.solver)
+        T_cold = self.testing_params['physical']['T_cold']
+        T_hot = self.testing_params['physical']['T_hot']
 
-    # Test a few random points outside circle for equality to T_cold
-    assert u[0, 0] == T_cold
-    assert u[10, 3] == T_cold
-    assert u[5, 6] == T_cold
+        # Test center of (quarter-)circle for equality to T_hot
+        assert u[15, 10] == T_hot
 
-    # Test edge of circle to ensure proper sizing and positioning
-    assert u[14, 10] == T_hot and u[13, 10] == T_hot and u[15, 9] == T_hot
-    assert u[12, 10] == T_cold and u[13, 9] == T_cold and u[15, 8] == T_cold and u[14, 9] == T_cold
+        # Test a few random points outside circle for equality to T_cold
+        assert u[0, 0] == T_cold
+        assert u[10, 3] == T_cold
+        assert u[5, 6] == T_cold
+
+        # Test edge of circle to ensure proper sizing and positioning
+        assert u[14, 10] == T_hot and u[13, 10] == T_hot and u[15, 9] == T_hot
+        assert u[12, 10] == T_cold and u[13, 9] == T_cold and u[15, 8] == T_cold and u[14, 9] == T_cold
+
+
+if __name__ == '__main__':
+    unittest.main()
 
 
     
