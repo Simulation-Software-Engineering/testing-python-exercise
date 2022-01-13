@@ -38,14 +38,26 @@ class SolveDiffusion2D:
         self.dt = None
 
     def initialize_domain(self, w=10., h=10., dx=0.1, dy=0.1):
+        assert type(w) == float, "w not of type float"
+        assert type(h) == float, "h not of type float"
+        assert type(dx) == float, "dx not of type float"
+        assert type(dy) == float, "dy not of type float"
+
         self.w = w
         self.h = h
         self.dx = dx
         self.dy = dy
         self.nx = int(w / dx)
+        #self.nx = int(h / dx) #broken
         self.ny = int(h / dy)
 
-    def initialize_physical_parameters(self, d=4., T_cold=300, T_hot=700):
+        assert type(w) == float, "w not of type float"
+
+    def initialize_physical_parameters(self, d=4., T_cold=300., T_hot=700.):
+        assert type(d) == float, "d not of type float"
+        assert type(T_cold) == float, "T_cold not of type float"
+        assert type(T_hot) == float, "T_hot not of type float"
+
         self.D = d
         self.T_cold = T_cold
         self.T_hot = T_hot
@@ -53,6 +65,7 @@ class SolveDiffusion2D:
         # Computing a stable time step
         dx2, dy2 = self.dx * self.dx, self.dy * self.dy
         self.dt = dx2 * dy2 / (2 * self.D * (dx2 + dy2))
+        #self.dt = dx2 * dy2 / (2 * self.D * (dx2 + dx2)) #broken
 
         print("dt = {}".format(self.dt))
 
@@ -65,6 +78,7 @@ class SolveDiffusion2D:
         for i in range(self.nx):
             for j in range(self.ny):
                 p2 = (i * self.dx - cx) ** 2 + (j * self.dy - cy) ** 2
+                #p2 = (i * self.dx - cx) ** 2 + (j * self.dx - cy) ** 2 #broken
                 if p2 < r2:
                     u[i, j] = self.T_hot
 
