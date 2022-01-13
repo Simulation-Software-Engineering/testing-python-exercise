@@ -4,10 +4,32 @@ Tests for functions in class SolveDiffusion2D
 
 from diffusion2d import SolveDiffusion2D
 
+def fixed_domain_init(solver):
+    """
+    Initialize solver domain with fixed values used for testing
+    """
+    solver.w = 5.
+    solver.h = 4.
+    solver.dx = .3
+    solver.dy = .35
+    solver.nx = int(solver.w / solver.dx)
+    solver.ny = int(solver.h / solver.dx)
+
+
+def fixed_phys_param_init(solver):
+    """
+    Initialize solver physical parameters and dt 
+    with fixed values used for testing
+    """
+    solver.D = 3.
+    solver.T_cold = 250.
+    solver.T_hot = 800.
+    solver.dt = .008647059
+
 
 def test_initialize_domain():
     """
-    Check function SolveDiffusion2D.initialize_domain
+    Checks function SolveDiffusion2D.initialize_domain
     """
     solver = SolveDiffusion2D()
     # test as many variations as possible
@@ -32,7 +54,7 @@ def test_initialize_physical_parameters():
     Checks function SolveDiffusion2D.initialize_physical_parameters
     """
     solver = SolveDiffusion2D()
-    solver.initialize_domain(5., 4., .3, .35)
+    fixed_domain_init(solver)
     solver.initialize_physical_parameters(3., 250., 800.)
 
     assert type(solver.D) == float
@@ -53,8 +75,8 @@ def test_set_initial_condition():
     T_hot = 800.
 
     solver = SolveDiffusion2D()
-    solver.initialize_domain(5., 4., .3, .35)
-    solver.initialize_physical_parameters(3., T_cold, T_hot)
+    fixed_domain_init(solver)
+    fixed_phys_param_init(solver)
     u = solver.set_initial_condition()
 
     # Test center of (quarter-)circle for equality to T_hot
