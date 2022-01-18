@@ -37,15 +37,23 @@ class SolveDiffusion2D:
         # Timestep
         self.dt = None
 
-    def initialize_domain(self, w=10., h=10., dx=0.1, dy=0.1):
+    def initialize_domain(self, w=10.0, h=10.0, dx=0.1, dy=0.1):
+        assert type(w) is float and "check if parameter w is float"
+        assert type(h) is float and "check if parameter h is float"
+        assert type(dx) is float and "check if parameter dx is float"
+        assert type(dy) is float and "check if parameter dy is float"
         self.w = w
         self.h = h
         self.dx = dx
         self.dy = dy
         self.nx = int(w / dx)
+        #self.nx = int(h / dx)
         self.ny = int(h / dy)
 
-    def initialize_physical_parameters(self, d=4., T_cold=300, T_hot=700):
+    def initialize_physical_parameters(self, d=4.0, T_cold=300.0, T_hot=700.0):
+        assert type(d) is float and "check if parameter d is float"
+        assert type(T_cold) is float and "check if parameter T_cold is float"
+        assert type(T_hot) is float and "check if parameter T_hot is float"
         self.D = d
         self.T_cold = T_cold
         self.T_hot = T_hot
@@ -53,6 +61,7 @@ class SolveDiffusion2D:
         # Computing a stable time step
         dx2, dy2 = self.dx * self.dx, self.dy * self.dy
         self.dt = dx2 * dy2 / (2 * self.D * (dx2 + dy2))
+        #self.dt = dx2 * dx2 / (2 * self.D * (dx2 + dy2))
 
         print("dt = {}".format(self.dt))
 
@@ -65,6 +74,7 @@ class SolveDiffusion2D:
         for i in range(self.nx):
             for j in range(self.ny):
                 p2 = (i * self.dx - cx) ** 2 + (j * self.dy - cy) ** 2
+                #p2 = (self.dx - cx) ** 2 + (j * self.dy - cy) ** 2
                 if p2 < r2:
                     u[i, j] = self.T_hot
 
@@ -78,17 +88,20 @@ class SolveDiffusion2D:
 
         # Propagate with forward-difference in time, central-difference in space
         u[1:-1, 1:-1] = u_nm1[1:-1, 1:-1] + self.D * self.dt * (
-                (u_nm1[2:, 1:-1] - 2 * u_nm1[1:-1, 1:-1] + u_nm1[:-2, 1:-1]) / dx2
-                + (u_nm1[1:-1, 2:] - 2 * u_nm1[1:-1, 1:-1] + u_nm1[1:-1, :-2]) / dy2)
+            (u_nm1[2:, 1:-1] - 2 * u_nm1[1:-1, 1:-1] + u_nm1[:-2, 1:-1]) / dx2
+            + (u_nm1[1:-1, 2:] - 2 * u_nm1[1:-1, 1:-1] + u_nm1[1:-1, :-2]) / dy2
+        )
 
         return u.copy()
 
     def create_figure(self, fig, u, n, fignum):
         fignum += 1
         ax = fig.add_subplot(220 + fignum)
-        im = ax.imshow(u.copy(), cmap=plt.get_cmap('hot'), vmin=self.T_cold, vmax=self.T_hot)
+        im = ax.imshow(
+            u.copy(), cmap=plt.get_cmap("hot"), vmin=self.T_cold, vmax=self.T_hot
+        )
         ax.set_axis_off()
-        ax.set_title('{:.1f} ms'.format(n * self.dt * 1000))
+        ax.set_title("{:.1f} ms".format(n * self.dt * 1000))
 
         return fignum, im
 
@@ -96,7 +109,7 @@ class SolveDiffusion2D:
 def output_figure(fig, im):
     fig.subplots_adjust(right=0.85)
     cbar_ax = fig.add_axes([0.9, 0.15, 0.03, 0.7])
-    cbar_ax.set_xlabel('$T$ / K', labelpad=20)
+    cbar_ax.set_xlabel("$T$ / K", labelpad=20)
     fig.colorbar(im, cax=cbar_ax)
     plt.show()
 
