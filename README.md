@@ -166,6 +166,97 @@ Ran 3 tests in 0.001s
 
 FAILED (failures=1)
 
+### pytest integration test logs
+
+=========================== test session starts ===========================
+platform linux -- Python 3.8.10, pytest-6.2.5, py-1.11.0, pluggy-1.0.0
+rootdir: /home/lmb/SimSE/testing-python-exercise
+collected 2 items                                                         
+
+tests/integration/test_diffusion2d.py F.                            [100%]
+
+================================ FAILURES =================================
+___________________ test_initialize_physical_parameters ___________________
+
+    def test_initialize_physical_parameters():
+        """
+        Checks function SolveDiffusion2D.initialize_domain
+        """
+        solver = SolveDiffusion2D()
+        # fixture
+        w = 1.
+        h = 2.
+        d = 2.
+        T_cold = 350.
+        T_hot = 420.
+        dx = 1.
+        dy = 0.5
+        # expected result
+        expected_dt = 0.125
+        # actual result
+        solver.initialize_domain(w, h, dx, dy)
+        solver.initialize_physical_parameters(d, T_cold, T_hot)
+        # test
+>       assert expected_dt == solver.dt
+E       assert 0.125 == 0.05
+E        +  where 0.05 = <diffusion2d.SolveDiffusion2D object at 0x7f4a116fd430>.dt
+
+tests/integration/test_diffusion2d.py:28: AssertionError
+-------------------------- Captured stdout call ---------------------------
+dt = 0.05
+========================= short test summary info =========================
+FAILED tests/integration/test_diffusion2d.py::test_initialize_physical_parameters
+======================= 1 failed, 1 passed in 0.32s =======================
+
+=========================== test session starts ===========================
+platform linux -- Python 3.8.10, pytest-6.2.5, py-1.11.0, pluggy-1.0.0
+rootdir: /home/lmb/SimSE/testing-python-exercise
+collected 2 items                                                         
+
+tests/integration/test_diffusion2d.py .F                            [100%]
+
+================================ FAILURES =================================
+_______________________ test_set_initial_condition ________________________
+
+    def test_set_initial_condition():
+        """
+        Checks function SolveDiffusion2D.get_initial_function
+        """
+        solver = SolveDiffusion2D()
+        # fixture
+        w = 9.
+        h = 11.
+        dx = 4.5
+        dy = 5.5
+        d = 2.
+        T_cold = 200.
+        T_hot = 420.
+    
+        # expected result
+        nx = int(w/dx)
+        ny = int(h/dy)
+        expected_u = T_cold * np.ones((nx,ny))
+        expected_u[1,1] = T_cold
+        # actual result
+        solver.initialize_domain(w, h, dx, dy)
+        solver.initialize_physical_parameters(d, T_cold, T_hot)
+        actual_u = solver.set_initial_condition()
+        # expected_u_approx = pytest.approx(expected_u, abs=0.01)
+        # test
+        # self.assertAlmostEqual(expected_u_approx, actual_u)
+        for idx_x in range(solver.nx):
+            for idx_y in range(solver.ny):
+>               assert expected_u[idx_x, idx_y] == actual_u[idx_x, idx_y]
+E               assert 200.0 == 420.0
+
+tests/integration/test_diffusion2d.py:58: AssertionError
+-------------------------- Captured stdout call ---------------------------
+dt = 3.032487623762376
+========================= short test summary info =========================
+FAILED tests/integration/test_diffusion2d.py::test_set_initial_condition
+======================= 1 failed, 1 passed in 0.32s =======================
+
+
 ## Citing
 
 The code used in this exercise is based on [Chapter 7 of the book "Learning Scientific Programming with Python"](https://scipython.com/book/chapter-7-matplotlib/examples/the-two-dimensional-diffusion-equation/).
