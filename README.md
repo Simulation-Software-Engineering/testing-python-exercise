@@ -118,6 +118,54 @@ FAILED tests/unit/test_diffusion2d_functions.py::test_set_initial_condition
 
 ### unittest log
 
+Fdt = 0.125
+..
+======================================================================
+FAIL: test_initialize_domain (tests.unit.test_diffusion2d_functions.TestDiffusion2D)
+Check function SolveDiffusion2D.initialize_domain
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lmb/SimSE/testing-python-exercise/tests/unit/test_diffusion2d_functions.py", line 29, in test_initialize_domain
+    self.assertEqual(self.solver.nx, expected_nx)
+AssertionError: 10 != 5
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=1)
+
+.dt = 0.25
+F.
+======================================================================
+FAIL: test_initialize_physical_parameters (tests.unit.test_diffusion2d_functions.TestDiffusion2D)
+Checks function SolveDiffusion2D.initialize_domain
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lmb/SimSE/testing-python-exercise/tests/unit/test_diffusion2d_functions.py", line 47, in test_initialize_physical_parameters
+    self.assertAlmostEqual(expected_dt, self.solver.dt)
+AssertionError: 0.125 != 0.25 within 7 places (0.125 difference)
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=1)
+
+.dt = 0.125
+.F
+======================================================================
+FAIL: test_set_initial_condition (tests.unit.test_diffusion2d_functions.TestDiffusion2D)
+Checks function SolveDiffusion2D.get_initial_function
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/lmb/SimSE/testing-python-exercise/tests/unit/test_diffusion2d_functions.py", line 73, in test_set_initial_condition
+    self.assertEqual(expected_u[idx_x, idx_y], actual_u[idx_x, idx_y])
+AssertionError: 200.0 != 420.0
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=1)
+
 ## Citing
 
 The code used in this exercise is based on [Chapter 7 of the book "Learning Scientific Programming with Python"](https://scipython.com/book/chapter-7-matplotlib/examples/the-two-dimensional-diffusion-equation/).

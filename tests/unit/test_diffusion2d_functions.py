@@ -61,9 +61,14 @@ class TestDiffusion2D(TestCase):
         self.solver.T_hot = 420.
     
         # expected result
-        expected_u = np.array([[200., 200.], [200., 420.]])
+        # expected_u = np.array([[200., 200.], [200., 420.]])
+        expected_u = self.solver.T_cold * np.ones((self.solver.nx,self.solver.ny))
+        expected_u[1,1] = self.solver.T_hot
         # actual result
         actual_u = self.solver.set_initial_condition()
-        expected_u_approx = pytest.approx(expected_u, abs=0.01)
+        # expected_u_approx = pytest.approx(expected_u, abs=0.01)
         # test
-        self.assertAlmostEqual(expected_u_approx, actual_u)
+        # self.assertAlmostEqual(expected_u_approx, actual_u)
+        for idx_x in range(self.solver.nx):
+            for idx_y in range(self.solver.ny):
+                self.assertEqual(expected_u[idx_x, idx_y], actual_u[idx_x, idx_y])
