@@ -6,9 +6,10 @@ Example acquired from https://scipython.com/book/chapter-7-matplotlib/examples/t
 
 import numpy as np
 import matplotlib.pyplot as plt
+import unittest
 
 
-class SolveDiffusion2D:
+class SolveDiffusion2D(unittest.TestCase):
     def __init__(self):
         """
         Constructor of class SolveDiffusion2D
@@ -37,7 +38,9 @@ class SolveDiffusion2D:
         # Timestep
         self.dt = None
 
+
     def initialize_domain(self, w=10., h=10., dx=0.1, dy=0.1):
+    	
         self.w = w
         self.h = h
         self.dx = dx
@@ -45,10 +48,21 @@ class SolveDiffusion2D:
         self.nx = int(w / dx)
         self.ny = int(h / dy)
 
-    def initialize_physical_parameters(self, d=4., T_cold=300, T_hot=700):
+        # CHECKING THE TYPE OF VARIABLES
+        self.assertIsInstance(w,float)
+        self.assertIsInstance(h,float)
+        self.assertIsInstance(dx,float)
+        self.assertIsInstance(dy,float)
+	
+    def initialize_physical_parameters(self, d=4., T_cold=300., T_hot=700.):
         self.D = d
         self.T_cold = T_cold
         self.T_hot = T_hot
+
+        # CHECKING THE TYPE OF VARIABLES
+        self.assertIsInstance(d, float)
+        self.assertIsInstance(T_hot, float)
+        self.assertIsInstance(T_cold, float)
 
         # Computing a stable time step
         dx2, dy2 = self.dx * self.dx, self.dy * self.dy
@@ -91,6 +105,8 @@ class SolveDiffusion2D:
         ax.set_title('{:.1f} ms'.format(n * self.dt * 1000))
 
         return fignum, im
+
+
 
 
 def output_figure(fig, im):
