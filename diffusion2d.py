@@ -33,19 +33,38 @@ class SolveDiffusion2D:
 
         # Initial hot temperature of circular disc at the center
         self.T_hot = None
-
         # Timestep
         self.dt = None
 
-    def initialize_domain(self, w=10., h=10., dx=0.1, dy=0.1):
+    def initialize_domain(self, w=10.0, h=10.0, dx=0.1, dy=0.1):
+
+        # adding assertion
+        assert type(w) == float
+        assert type(h) == float
+        assert type(dx) == float
+        assert type(dy) == float
+
         self.w = w
         self.h = h
         self.dx = dx
         self.dy = dy
         self.nx = int(w / dx)
+
+        # mistake
+        # self.nx = int(h / dx)
+
         self.ny = int(h / dy)
 
-    def initialize_physical_parameters(self, d=4., T_cold=300, T_hot=700):
+    def initialize_physical_parameters(self, d=4.0, T_cold=300.0, T_hot=700.0):
+
+        # extra asserts
+        assert self.dx != None
+        assert self.dy != None
+        
+        assert type(d) == float
+        assert type(T_cold) == float
+        assert type(T_hot) == float
+
         self.D = d
         self.T_cold = T_cold
         self.T_hot = T_hot
@@ -54,9 +73,22 @@ class SolveDiffusion2D:
         dx2, dy2 = self.dx * self.dx, self.dy * self.dy
         self.dt = dx2 * dy2 / (2 * self.D * (dx2 + dy2))
 
+        # mistake
+        # self.dt = dx2 + dy2 / (2 * self.D * (dx2 + dy2))
+
+
         print("dt = {}".format(self.dt))
 
     def set_initial_condition(self):
+
+        # extra asserts (in other words we check if a previous initialisation was done)
+        assert self.T_cold != None
+        assert self.nx != None
+        assert self.ny != None
+        assert self.dx != None
+        assert self.dy != None
+
+
         u = self.T_cold * np.ones((self.nx, self.ny))
 
         # Initial conditions - circle of radius r centred at (cx,cy) (mm)
@@ -68,9 +100,20 @@ class SolveDiffusion2D:
                 if p2 < r2:
                     u[i, j] = self.T_hot
 
+                # mistake
+                # if p2>r2:
+                    # u[i, j] = self.T_hot
+
         return u.copy()
 
     def do_timestep(self, u_nm1):
+        
+        # extra asserts
+        assert self.dx != None
+        assert self.dy != None
+        assert self.D != None
+
+
         u = u_nm1.copy()
 
         dx2 = self.dx * self.dx
@@ -78,17 +121,20 @@ class SolveDiffusion2D:
 
         # Propagate with forward-difference in time, central-difference in space
         u[1:-1, 1:-1] = u_nm1[1:-1, 1:-1] + self.D * self.dt * (
-                (u_nm1[2:, 1:-1] - 2 * u_nm1[1:-1, 1:-1] + u_nm1[:-2, 1:-1]) / dx2
-                + (u_nm1[1:-1, 2:] - 2 * u_nm1[1:-1, 1:-1] + u_nm1[1:-1, :-2]) / dy2)
+            (u_nm1[2:, 1:-1] - 2 * u_nm1[1:-1, 1:-1] + u_nm1[:-2, 1:-1]) / dx2
+            + (u_nm1[1:-1, 2:] - 2 * u_nm1[1:-1, 1:-1] + u_nm1[1:-1, :-2]) / dy2
+        )
 
         return u.copy()
 
     def create_figure(self, fig, u, n, fignum):
         fignum += 1
         ax = fig.add_subplot(220 + fignum)
-        im = ax.imshow(u.copy(), cmap=plt.get_cmap('hot'), vmin=self.T_cold, vmax=self.T_hot)
+        im = ax.imshow(
+            u.copy(), cmap=plt.get_cmap("hot"), vmin=self.T_cold, vmax=self.T_hot
+        )
         ax.set_axis_off()
-        ax.set_title('{:.1f} ms'.format(n * self.dt * 1000))
+        ax.set_title("{:.1f} ms".format(n * self.dt * 1000))
 
         return fignum, im
 
@@ -96,7 +142,7 @@ class SolveDiffusion2D:
 def output_figure(fig, im):
     fig.subplots_adjust(right=0.85)
     cbar_ax = fig.add_axes([0.9, 0.15, 0.03, 0.7])
-    cbar_ax.set_xlabel('$T$ / K', labelpad=20)
+    cbar_ax.set_xlabel("$T$ / K", labelpad=20)
     fig.colorbar(im, cax=cbar_ax)
     plt.show()
 
