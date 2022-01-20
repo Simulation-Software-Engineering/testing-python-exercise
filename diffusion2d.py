@@ -4,6 +4,7 @@ Solving the two-dimensional diffusion equation
 Example acquired from https://scipython.com/book/chapter-7-matplotlib/examples/the-two-dimensional-diffusion-equation/
 """
 
+from socket import TIPC_HIGH_IMPORTANCE
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -38,26 +39,47 @@ class SolveDiffusion2D:
         self.dt = None
 
     def initialize_domain(self, w=10., h=10., dx=0.1, dy=0.1):
+        # check whether all variables are of type float
+        assert type(w) == float, "checks whether w in initialize_domain() is float"
+        assert type(h) == float, "checks whether h in initialize_domain() is float"
+        assert type(dx) == float, "checks whether dx in initialize_domain() is float"
+        assert type(dy) == float, "checks whether dy in initialize_domain() is float"
+
+        # defensive programming
+        assert dx > 0., "checks whether dx in initialize_domain() is positive"
+        assert dy > 0., "checks whether dy in initialize_domain() is positive"
+        assert w > 0., "checks whether w in initialize_domain() is positive"
+        assert h > 0., "checks whether h in initialize_domain() is positive"
+
         self.w = w
         self.h = h
         self.dx = dx
         self.dy = dy
-        self.nx = int(w / dx)
+        self.nx = int(w / dx) # int(h / dx) instead of int(w / dx)
         self.ny = int(h / dy)
 
-    def initialize_physical_parameters(self, d=4., T_cold=300, T_hot=700):
+    def initialize_physical_parameters(self, d=4., T_cold=300., T_hot=700.):
+        # checks whether all variables are of type float
+        assert type(d) == float, "checks whether d in initialize_physical_parameters() is float"    
+        assert type(T_cold) == float, "checks whether T_cold in initialize_physical_parameters() is float"
+        assert type(T_hot) == float, "checks whether T_hot in initialize_physical_parameters() is float"
+
+        # defensive programming
+        assert T_cold < T_hot, "checks whether T_hot is hotter than T_cold in initialize_physical_parameters() is float"
+        assert T_cold >= 0., "checks whether T_cold in initialize_physical_parameters() is positive"
+
         self.D = d
         self.T_cold = T_cold
         self.T_hot = T_hot
 
         # Computing a stable time step
         dx2, dy2 = self.dx * self.dx, self.dy * self.dy
-        self.dt = dx2 * dy2 / (2 * self.D * (dx2 + dy2))
+        self.dt = dx2 * dy2 / (2 * self.D * (dx2 + dy2)) # without 2
 
         print("dt = {}".format(self.dt))
 
     def set_initial_condition(self):
-        u = self.T_cold * np.ones((self.nx, self.ny))
+        u = self.T_cold * np.ones((self.nx, self.ny)) # T_hot instead of T_cold
 
         # Initial conditions - circle of radius r centred at (cx,cy) (mm)
         r, cx, cy = 2, 5, 5
