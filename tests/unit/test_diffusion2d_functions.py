@@ -36,14 +36,16 @@ def test_initialize_domain():
 
 def test_initialize_physical_parameters():
     """
-    Checks function SolveDiffusion2D.initialize_domain
+    Checks function SolveDiffusion2D.initialize_physical_parameters
     """
+    # Create solver and mock the required member variables (instead of calling initialize_domain)
     solver = SolveDiffusion2D()
-    w = 15.0
-    h = 15.0
+    
+    # Manually set the required member variables
     dx = 0.3
     dy = 0.3
-    solver.initialize_domain(w, h, dx, dy)
+    solver.dx = dx
+    solver.dy = dy
     
     # Test parameters
     d = 2.5
@@ -67,19 +69,27 @@ def test_initialize_physical_parameters():
 
 def test_set_initial_condition():
     """
-    Checks function SolveDiffusion2D.get_initial_function
+    Checks function SolveDiffusion2D.set_initial_condition
     """
-    # Create solver and initialize
+    # Create solver and manually set required member variables (mocking initialize_domain and initialize_physical_parameters)
     solver = SolveDiffusion2D()
+    
+    # Mock the required member variables
     w = 10.0
     h = 10.0
     dx = 0.5
     dy = 0.5
-    solver.initialize_domain(w, h, dx, dy)
+    solver.w = w
+    solver.h = h
+    solver.dx = dx
+    solver.dy = dy
+    solver.nx = int(w / dx)
+    solver.ny = int(h / dy)
     
     T_cold = 300.0
     T_hot = 700.0
-    solver.initialize_physical_parameters(d=4.0, T_cold=T_cold, T_hot=T_hot)
+    solver.T_cold = T_cold
+    solver.T_hot = T_hot
     
     # Call the function
     u = solver.set_initial_condition()
