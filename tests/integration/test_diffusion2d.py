@@ -3,7 +3,9 @@ Tests for functionality checks in class SolveDiffusion2D
 """
 
 from diffusion2d import SolveDiffusion2D
-import pytest
+
+import pytest 
+import numpy as np
 
 def test_initialize_physical_parameters():
     """
@@ -32,3 +34,20 @@ def test_set_initial_condition():
 
     solver.initialize_domain(8.0, 8.0, 1.0, 1.0)
     solver.initialize_physical_parameters(4.0, 0.0, 1.0)
+
+    # 8x8 domain with circle at (5,5)
+    expected_field = np.array(
+        [[0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 1., 1., 1., 0.],
+         [0., 0., 0., 0., 1., 1., 1., 0.],
+         [0., 0., 0., 0., 1., 1., 1., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0.]]
+    )
+
+    actual_field = solver.set_initial_condition()
+
+    error_norm = np.linalg.norm(expected_field - actual_field)
+    assert 0 == pytest.approx(error_norm, abs=1e-14)
