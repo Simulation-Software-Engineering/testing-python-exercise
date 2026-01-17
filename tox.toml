@@ -1,0 +1,8 @@
+[tox]
+envlist = ["test"]
+requires = ["tox>=4"]
+
+[env.test]
+description = "Run test suite with pytest."
+deps = "-r requirements.txt"
+commands = [["python","-m","pytest"]]
