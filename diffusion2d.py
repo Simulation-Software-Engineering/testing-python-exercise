@@ -71,8 +71,6 @@ class SolveDiffusion2D:
                 if p2 < r2:
                     u[i, j] = self.T_hot
 
-        print(u)
-
         return u.copy()
 
     def do_timestep(self, u_nm1):
