@@ -1,0 +1,17 @@
+[tool.tox]
+envlist = ["py"]
+
+[tool.tox.env_run_base]
+deps = [
+    "-rrequirements.txt"
+]
+
+commands = [
+    "echo '=== PYTEST (verbose) ===",
+    "pytest tests/ -v -s --tb=short",
+    "echo '=== COVERAGE REPORT ===",
+    "coverage run --source=diffusion2d -m pytest tests/",
+    "coverage report",
+    "echo '=== HTML in htmlcov/ ===",
+    "coverage html"
+]
