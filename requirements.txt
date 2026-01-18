@@ -1,0 +1,5 @@
+coverage>=7.13.1
+matplotlib>=3.10.8
+numpy>=2.4.1
+pytest>=9.0.2
+tox>=4.34.1
