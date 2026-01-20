@@ -1,0 +1,12 @@
+
+[tox]
+env_list = ["test_env"]
+no_package = true
+
+[testenv]
+deps = [
+    "-rrequirements.txt"
+]
+commands = [
+    ["pytest"]
+]
