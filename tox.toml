@@ -1,0 +1,12 @@
+requires = ["tox>=4"]
+env_list = ["py314"]
+
+[env_run_base]
+description = "run tests"
+deps = ["-r requirements.txt"]
+
+set_env = {PYTHONPATH = "{tox_root}" }
+
+commands = [
+    ["pytest"]
+]
