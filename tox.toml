@@ -1,0 +1,7 @@
+[tox]
+env_list = ["py"]
+
+[testenv]
+deps = ["-rrequirements.txt"]
+commands = [["python", "-m", "pytest"]]
+
