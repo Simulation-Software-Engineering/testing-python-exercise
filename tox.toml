@@ -1,0 +1,13 @@
+env_list = ["unit", "integration"]
+
+[env_run_base]
+deps = ["-rrequirements.txt"]
+set_env = { PYTHONPATH = "." }
+
+[env.unit]
+description = "Run unit tests with pytest"
+commands = [["python", "-m", "pytest", "tests/unit"]]
+
+[env.integration]
+description = "Run integration tests with pytest"
+commands = [["python", "-m", "pytest", "tests/integration"]]
